@@ -25,13 +25,18 @@
     <script src="js/jquery-3.4.1.min.js"></script>
     <script>
         $(document).ready(function() {
-            $.ajax({
-                url: 'https://amp-api.apps.apple.com/v1/catalog/VN/apps/1478513011?platform=web',
-                type: 'GET',
-                success: function(json) {
-                    var rank = json.data[0].attributes.chartPositions.appStore.position;
-                    $('#tarot-codex-rank').html('#' + rank);
-                }
+            // $.ajax({
+            //     url: 'https://amp-api.apps.apple.com/v1/catalog/VN/apps/1478513011?platform=web',
+            //     type: 'GET',
+            //     success: function(json) {
+            //         var rank = json.data[0].attributes.chartPositions.appStore.position;
+            //         $('#tarot-codex-rank').html('#' + rank);
+            //     }
+            // });
+
+            $.get('https://apps.apple.com/vn/app/tarot-codex/id1478513011', function(data) {
+                var rank = $(data).find('.inline-list__item').get(0).textContent.replace(' in Books', '');
+                $('#tarot-codex-rank').html(rank);
             });
         });
     </script>
