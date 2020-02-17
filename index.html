@@ -28,11 +28,9 @@
             $.ajax({
                 url: 'https://amp-api.apps.apple.com/v1/catalog/VN/apps/1478513011?platform=web',
                 type: 'GET',
-                success: function(data) {
-                    var dict = data['data'][0];
-                    var rank = dict['attributes']['chartPositions']['appStore']['position'];
-                    console.log(dict)
-                    $('#tarot-codex-rank').html('#' + rank)
+                success: function(json) {
+                    var rank = json.data[0].attributes.chartPositions.appStore.position;
+                    $('#tarot-codex-rank').html('#' + rank);
                 }
             });
         });
