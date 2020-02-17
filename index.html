@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="css/mystyle.css" />
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-79255289-2"></script>
+    <script src="https://kit.fontawesome.com/4143eee38a.js" crossorigin="anonymous"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
 
@@ -25,17 +26,58 @@
     <script src="js/jquery-3.4.1.min.js"></script>
     <script>
         $(document).ready(function() {
-            // $.ajax({
-            //     url: 'https://amp-api.apps.apple.com/v1/catalog/VN/apps/1478513011?platform=web',
-            //     type: 'GET',
-            //     success: function(json) {
-            //         var rank = json.data[0].attributes.chartPositions.appStore.position;
-            //         $('#tarot-codex-rank').html('#' + rank);
-            //     }
-            // });
 
-            $.get('https://apps.apple.com/vn/app/tarot-codex/id1478513011', function(data) {
-                var rank = $(data).find('.inline-list__item').get(0).textContent.replace(' in Books', '');
+            function reviewRender(review) {
+                return `
+                    <div class="review-box">
+                        <div>${ratingRender(+review.rating)}</div>
+                        <p class="review-author">${review.author}</p>
+                        <p class="review-content">${review.content}<p>
+                    </div>
+                `
+            }
+
+            function ratingRender(rating) {
+                let star = "";
+                if (rating) {
+                    for (let x = 1; x <= rating; x++) {
+                        star += "<i class='fas fa-star'></i>"
+                    }
+                    if (rating != 5) {
+                        for (let x = 1; x <= 5 - rating; x++) {
+                            star += "<i class='far fa-star'></i>"
+                        }
+                    }
+                }
+                return star;
+            }
+
+            // Fetch Metal Archives reviews
+            $.get('https://itunes.apple.com/rss/customerreviews/id=1074038930/sortBy=mostHelpful/json', function(jsonString) {
+                var json = JSON.parse(jsonString);
+                var entries = json.feed.entry;
+                var reviews = [];
+                entries.forEach(element => {
+                    var review = {
+                        author: element.author.name.label,
+                        rating: element['im:rating'].label,
+                        title: element.title.label.label,
+                        content: element.content.label
+                    };
+                    reviews.push(review);
+                });
+
+                var reviewsHTML = "<div id='review'>";
+                reviews.forEach(element => {
+                    reviewsHTML += reviewRender(element);
+                });
+                reviewsHTML += "</div>";
+                $('#metal-archives-reviews').html(reviewsHTML);
+            });
+
+            // Fetch Tarot Codex's ranking
+            $.get('https://apps.apple.com/vn/app/tarot-codex/id1478513011', function(html) {
+                var rank = $(html).find('.inline-list__item').get(0).textContent.replace(' in Books', '');
                 $('#tarot-codex-rank').html(rank);
             });
         });
@@ -144,7 +186,7 @@
                 <img src="images/metal-archives/icon.png" class="appicon"></img>
                 <h2>Metal Archives | iOS <span>&nbsp;2016 - now&nbsp;</span></h2>
                 iOS interface for the site <a href="https://www.metal-archives.com/" target="_blank">https://www.metal-archives.com/</a>
-                <br />Written in <strong id="swift-color">Swift</strong> | 400+ daily active users | 200+ ratings | 4.9/5⭐
+                <br />Written in <strong id="swift-color">Swift</strong> | 400+ daily active users | 200+ overall rating | 4.9/5⭐
                 <br />Analytics & Push Notification with <strong id="firebase-color">Firebase</strong> | Database with
                 <strong>Core Data</strong>
                 <br /><br /><a href="https://apps.apple.com/us/app/id1074038930" target="_blank">View on App Store</a> |
@@ -181,6 +223,12 @@
                 <li class="feature">Customizable default discography mode: complete, main, lives, demos, misc.</li class="feature">
                 <li class="feature">Today widget keeps you stay updated.</li class="feature">
                 <li class="feature">3D touch for quick actions: search, random band.</li class="feature">
+
+                <br/>
+                <strong>Reviews from the US App Store:</strong><br/>
+                <div class="scrolly" style="height: auto;" id="metal-archives-reviews">
+                    <!--To be populated by ajax-->
+                </div>
 
                 <br />
                 <hr class="style3">
@@ -261,17 +309,19 @@
                     <img src="images/alice-fleurs/5.png" class="screenshot">
                     <img src="images/alice-fleurs/6.png" class="screenshot">
                 </div>
+                <br/>
                 <strong>Application’s features:</strong><br />
                 <li class="feature">Create & print receipt through a thermal printer.</li>
-                <li class="feature">Generate invoice as PDF file to send to customers.</li class="feature">
-                <li class="feature">Register daily turnover & display comparison chart between 2 latest years.</li class="feature">
-                <li class="feature">Show list of floral service (bouquet, wedding & funeral).</li class="feature">
-                <li class="feature">Show list of plants.</li class="feature">
+                <li class="feature">Generate invoice as PDF file to send to customers.</li>
+                <li class="feature">Register daily turnover & display comparison chart between 2 latest years.</li>
+                <li class="feature">Show list of floral service (bouquet, wedding & funeral).</li>
+                <li class="feature">Show list of plants.</li>
 
+                <br/>
                 <strong>Demo video:</strong>
                 <br/><iframe width="560" height="315" src="https://www.youtube.com/embed/Xk6I5qGKopk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-                <br />
+                <br /><br/>
                 <hr class="style3">
                 <br />
 
